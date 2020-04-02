@@ -1,0 +1,16 @@
+{
+  "name": "flush-play",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jsdom": "^16.2.2",
+    "ora": "^4.0.3",
+    "summary-statistics": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node ./client.js --unhandled-rejections=strict && ./test.r",
+    "start:debug": "node --inspect-brk ./client.js --unhandled-rejections=strict"
+  }
+}
