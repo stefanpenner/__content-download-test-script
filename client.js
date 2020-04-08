@@ -4,9 +4,10 @@ const summaryStatistics = require('summary-statistics');
 const jsdom = require('jsdom');
 const ora = require('ora');
 const fs = require('fs');
+const print = require('./lib/stats');
 
-const FASTLANE_ENABLED = 'lror="pemberly.bpr.useFastlane=enabled"';
-const FASTLANE_DISABLD = 'lror="pemberly.bpr.useFastlane=control"';
+const FASTLANE_ENABLED  = 'lror="pemberly.bpr.useFastlane=enabled"';
+const FASTLANE_DISABLED = 'lror="pemberly.bpr.useFastlane=control"';
 
 const EXPERIMENT = true;
 const CONTROL = false;
@@ -27,7 +28,7 @@ if (!('COOKIE' in process.env)) {
 }
 
 async function test(isExperiment) {
-  const lixCookie = isExperiment ? FASTLANE_ENABLED : FASTLANE_DISABLD;
+  const lixCookie = isExperiment ? FASTLANE_ENABLED : FASTLANE_DISABLED;
   const headers = {
     authority: host,
     pragma: 'no-cache',
@@ -140,8 +141,11 @@ function summarize(args) {
   const summarizedControl = summarize(control);
   const summarizedExperiment = summarize(experiment);
 
-  console.log(`[CONTROL] n=${COUNT}`, summarizedControl);
-  console.log(`[EXPERIMENT] n=${COUNT}`, summarizedExperiment);
+  print(
+  `Content Download: ${inputUrl}`,
+    control.map(x => x.contentDownload),
+    experiment.map(x => x.contentDownload)
+  );
 
   console.log(
     `contentDownload.avg delta(enabled - control): ${
