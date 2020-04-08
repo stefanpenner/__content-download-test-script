@@ -53,7 +53,10 @@ if (options.NO_GZIP)  {
 
   // spawn new pool, it seemed like node was having issues due to shared state between requests..
   // measurements are still only based on content download time approximation and wont be affected by process start/stop times
-  const pool = workerpool.pool(__dirname + '/lib/worker.js');
+  const pool = workerpool.pool(__dirname + '/lib/worker.js', {
+    workerType: 'process',
+    minWorkers: 4
+  });
   const experiment = [];
   const control = [];
 
