@@ -146,6 +146,11 @@ async function test(isExperiment) {
         onEnd();
         connection.close();
       });
+
+      request.on('close', () => {
+        onEnd();
+        connection.close();
+      });
     }
   });
 }
