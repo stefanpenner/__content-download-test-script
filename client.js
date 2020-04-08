@@ -29,11 +29,16 @@ if (!('COOKIE' in process.env)) {
 }
 
 if (process.env.HTTP_V1)  {
-  console.log('HTTPv1.1');
+  console.log('HTTP: v1.1');
 } else {
-  console.log('HTTPv2');
+  console.log('HTTP: v2 (use: HTTP_V1=1 to use http v1.1)');
 }
 
+if (process.env.NO_GZIP)  {
+  console.log('GZIP: off');
+} else {
+  console.log('GZIP: on (use NO_GZIP=1 to disable)');
+}
 async function test(isExperiment) {
   const lixCookie = isExperiment ? FASTLANE_ENABLED : FASTLANE_DISABLED;
   const headers = {
@@ -44,7 +49,7 @@ async function test(isExperiment) {
     'user-agent':
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
     'sec-fetch-dest': 'document',
-    'accept-encoding': 'gzip, deflate, br',
+    'accept-encoding': process.env.NO_GZIP ? '' : 'gzip, deflate, br',
     accept:
       'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
     'sec-fetch-site': 'same-origin',
@@ -71,7 +76,14 @@ async function test(isExperiment) {
     function onEnd() {
       timings.contentDownload = Date.now() - initial;
       timings.total = Date.now() - start;
-      const body = zlib.unzipSync(Buffer.concat(chunks)).toString();
+      let body;
+
+      if (process.env.NO_GZIP) {
+        body = chunks.join('');
+      } else {
+        body = zlib.unzipSync(Buffer.concat(chunks)).toString();
+      }
+
       timings.length = body.length;
 
       const hasFastlane = new jsdom.JSDOM(
