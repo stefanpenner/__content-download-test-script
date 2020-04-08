@@ -9,7 +9,8 @@
     "express": "^4.17.1",
     "jsdom": "^16.2.2",
     "ora": "^4.0.3",
-    "summary-statistics": "^1.0.0"
+    "summary-statistics": "^1.0.0",
+    "workerpool": "^5.0.4"
   },
   "scripts": {
     "start": "node ./client.js --unhandled-rejections=strict && ./test.r",
