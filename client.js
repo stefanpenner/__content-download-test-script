@@ -6,7 +6,6 @@ const ora = require('ora');
 const fs = require('fs');
 const print = require('./lib/stats');
 const zlib = require('zlib')
-
 const FASTLANE_ENABLED  = 'lror="pemberly.bpr.useFastlane=enabled"';
 const FASTLANE_DISABLED = 'lror="pemberly.bpr.useFastlane=control"';
 
