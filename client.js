@@ -59,11 +59,16 @@ if (options.NO_GZIP)  {
 
   try {
     for (let i = 0; i < COUNT; i++) {
-      spinner.text = `running [EXPERIMENT] iteration: ${i}`;
-      experiment.push(await pool.exec('test', [EXPERIMENT, options]));
-      spinner.text = `running [CONTROL] iteration: ${i}`;
-      control.push(await pool.exec('test', [CONTROL, options]));
-      await new Promise(resolve => setTimeout(resolve, 200));
+      if (!process.env.NO_EXPERIMENT) {
+        spinner.text = `running [EXPERIMENT] iteration: ${i}`;
+        experiment.push(await pool.exec('test', [EXPERIMENT, options]));
+      }
+
+      if (!process.env.NO_CONTROL) {
+        spinner.text = `running [CONTROL] iteration: ${i}`;
+        control.push(await pool.exec('test', [CONTROL, options]));
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
     }
 
   } finally{

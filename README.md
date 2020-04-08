@@ -9,6 +9,8 @@
 | COOKIE  | string      | Your cookie                                                                                         |
 | DEV_ENV | boolean     | Set this flag to `true` if you are in dev environment and want to ignore certificate related issues   |
 | HTTP_V1 | boolean     | toggle between http v1 and v2 (v2 default)                                                          |
+| NO_EXPERIMENT | boolean | disable the experiment scenario                                                                   |
+| NO_CONTROL | boolean    | disable the control scenario                                                                      |
 
 ```sh
 brew install r
