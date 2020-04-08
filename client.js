@@ -118,6 +118,7 @@ async function test(isExperiment) {
       );
     } else {
       const connection = http2.connect(`${protocol}//${host}${path}`);
+      connection.on('error', reject);
       const chunks = [];
       const request = connection.request({
         authority: host,
@@ -158,6 +159,7 @@ async function test(isExperiment) {
 
   spinner.start();
   const experiment = [];
+
   const control = [];
 
   for (let i = 0; i < COUNT; i++) {
