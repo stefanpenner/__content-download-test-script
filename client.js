@@ -42,6 +42,8 @@ if (options.NO_GZIP)  {
 } else {
   console.log('GZIP: on (use NO_GZIP=1 to disable)');
 }
+
+const worker = require('./lib/worker');
 (async function main() {
   const COUNT = Number(process.env.COUNT) || 10;
   console.log(
@@ -50,34 +52,22 @@ if (options.NO_GZIP)  {
   const spinner = ora('running').start();
 
   spinner.start();
-
-  // spawn new pool, it seemed like node was having issues due to shared state between requests..
-  // measurements are still only based on content download time approximation and wont be affected by process start/stop times
-  const pool = workerpool.pool(__dirname + '/lib/worker.js', {
-    workerType: 'process',
-    minWorkers: 4
-  });
   const experiment = [];
   const control = [];
 
-  try {
-    for (let i = 0; i < COUNT; i++) {
-      if (!process.env.NO_EXPERIMENT) {
-        spinner.text = `running [EXPERIMENT] iteration: ${i}`;
-        experiment.push(await pool.exec('test', [EXPERIMENT, options]));
-      }
-
-      if (!process.env.NO_CONTROL) {
-        spinner.text = `running [CONTROL] iteration: ${i}`;
-        control.push(await pool.exec('test', [CONTROL, options]));
-        await new Promise(resolve => setTimeout(resolve, 200));
-      }
+  for (let i = 0; i < COUNT; i++) {
+    if (!process.env.NO_EXPERIMENT) {
+      spinner.text = `running [EXPERIMENT] iteration: ${i}`;
+      experiment.push(await worker([EXPERIMENT, options]));
     }
-
-  } finally{
-    spinner.stop();
-    pool.terminate();
+    if (!process.env.NO_CONTROL) {
+      spinner.text = `running [CONTROL] iteration: ${i}`;
+      control.push(await worker([CONTROL, options]));
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
   }
+
+    spinner.stop();
 
   fs.writeFileSync('out.csv', [
     ['iteration', 'scenario', 'ms'].join(','),
