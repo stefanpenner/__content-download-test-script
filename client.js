@@ -63,11 +63,10 @@ const worker = require('./lib/worker');
     if (!process.env.NO_CONTROL) {
       spinner.text = `running [CONTROL] iteration: ${i}`;
       control.push(await worker([CONTROL, options]));
-      await new Promise(resolve => setTimeout(resolve, 200));
     }
   }
 
-    spinner.stop();
+  spinner.stop();
 
   fs.writeFileSync('out.csv', [
     ['iteration', 'scenario', 'ms'].join(','),
