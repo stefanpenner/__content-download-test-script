@@ -2,9 +2,6 @@ const { parse } = require('url');
 const ora = require('ora');
 const fs = require('fs');
 const print = require('./lib/stats');
-const workerpool = require('workerpool');
-const EXPERIMENT = true;
-const CONTROL = false;
 
 const inputUrl = process.env.URL;
 const { protocol, host, path } = parse(inputUrl);
@@ -58,11 +55,11 @@ const worker = require('./lib/worker');
   for (let i = 0; i < COUNT; i++) {
     if (!process.env.NO_EXPERIMENT) {
       spinner.text = `running [EXPERIMENT] iteration: ${i}`;
-      experiment.push(await worker([EXPERIMENT, options]));
+      experiment.push(await worker(['EXPERIMENT', options]));
     }
     if (!process.env.NO_CONTROL) {
       spinner.text = `running [CONTROL] iteration: ${i}`;
-      control.push(await worker([CONTROL, options]));
+      control.push(await worker(['CONTROL', options]));
     }
   }
 
