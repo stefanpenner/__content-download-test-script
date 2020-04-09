@@ -52,18 +52,21 @@ const worker = require('./lib/worker');
   const experiment = [];
   const control = [];
 
-  for (let i = 0; i < COUNT; i++) {
-    if (!process.env.NO_EXPERIMENT) {
-      spinner.text = `running [EXPERIMENT] iteration: ${i}`;
-      experiment.push(await worker(['EXPERIMENT', options]));
+  try {
+    for (let i = 0; i < COUNT; i++) {
+      if (!process.env.NO_EXPERIMENT) {
+        spinner.text = `running [EXPERIMENT] iteration: ${i}`;
+        experiment.push(await worker(['EXPERIMENT', options]));
+      }
+      if (!process.env.NO_CONTROL) {
+        spinner.text = `running [CONTROL] iteration: ${i}`;
+        control.push(await worker(['CONTROL', options]));
+      }
     }
-    if (!process.env.NO_CONTROL) {
-      spinner.text = `running [CONTROL] iteration: ${i}`;
-      control.push(await worker(['CONTROL', options]));
-    }
-  }
 
-  spinner.stop();
+  }  finally {
+    spinner.stop();
+  }
 
   fs.writeFileSync('out.csv', [
     ['iteration', 'scenario', 'ms'].join(','),
